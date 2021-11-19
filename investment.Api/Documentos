@@ -1,0 +1,16 @@
+<?xml version="1.0"?>
+<doc>
+    <assembly>
+        <name>Investment.Api</name>
+    </assembly>
+    <members>
+        <member name="M:Investment.Api.Controllers.UserController.CreateUser(Investment.Core.Interfaces.IUserUseCase,Investment.Core.Dtos.User.CreateUserDto)">
+            <summary>
+            Cadastra usuário na base
+            </summary>
+            <param name="userUseCase"></param>
+            <param name="createUserDto"></param>
+            <returns></returns>
+        </member>
+    </members>
+</doc>
