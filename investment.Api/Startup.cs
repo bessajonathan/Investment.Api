@@ -1,4 +1,8 @@
+using Hangfire;
+using Hangfire.MemoryStorage;
+using Investment.Api.Service;
 using Investment.Common.Settings;
+using Investment.Core.Interfaces;
 using Investment.Ioc;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;
@@ -11,6 +15,7 @@ using Microsoft.Extensions.Hosting;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
 using System;
+using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Reflection;
@@ -57,6 +62,33 @@ namespace Investment.Api
                     .Replace(",", "-")
                     .Replace("`", "_")
                 );
+                c.AddSecurityDefinition("Bearer", new OpenApiSecurityScheme
+                {
+                    Description = "É necessário informar o bearer token para utilizar as rotas",
+                    Name = "Authorization",
+                    In = ParameterLocation.Header,
+                    Type = SecuritySchemeType.ApiKey,
+                    Scheme = "Bearer"
+                });
+
+                c.AddSecurityRequirement(new OpenApiSecurityRequirement()
+                {
+                    {
+                      new OpenApiSecurityScheme
+                      {
+                        Reference = new OpenApiReference
+                          {
+                            Type = ReferenceType.SecurityScheme,
+                            Id = "Bearer"
+                          },
+                          Scheme = "oauth2",
+                          Name = "Bearer",
+                          In = ParameterLocation.Header,
+
+                        },
+                    new List<string>()
+                  }
+                });
 
             });
             services.Configure<ApplicationSettings>(Configuration.GetSection("ApplicationSettings"));
@@ -71,10 +103,10 @@ namespace Investment.Api
                      x.TokenValidationParameters = new TokenValidationParameters
                      {
                          ValidateIssuer = true,
-                         ValidIssuer= "https://securetoken.google.com/investment-4d9cc",
-                         ValidateAudience=true,
+                         ValidIssuer = "https://securetoken.google.com/investment-4d9cc",
+                         ValidateAudience = true,
                          ValidAudience = "investment-4d9cc",
-                         ValidateLifetime=true
+                         ValidateLifetime = true
                      };
                  });
             services.AddAuthorization(options =>
@@ -96,13 +128,14 @@ namespace Investment.Api
                     });
                 };
             });
+            services.AddHangfire(config => config.UseMemoryStorage());
 
 
             DependencyContainer.RegisterServices(services, Configuration);
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
-        public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
+        public void Configure(IApplicationBuilder app, IWebHostEnvironment env, IServiceProvider sp)
         {
             if (env.IsDevelopment())
             {
@@ -119,10 +152,19 @@ namespace Investment.Api
 
             app.UseAuthorization();
 
+            app.UseHangfireServer(new BackgroundJobServerOptions
+            {
+                ServerName = Guid.NewGuid().ToString()
+            });
+
+            app.UseHangfireDashboard("/jobs");
+
             app.UseEndpoints(endpoints =>
             {
                 endpoints.MapControllers();
             });
+
+            new BackgroudJobs(sp.GetService<IBackgroudJobService>()).StartJobs();
         }
     }
 }

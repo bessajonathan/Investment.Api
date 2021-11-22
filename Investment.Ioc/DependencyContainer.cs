@@ -1,4 +1,6 @@
 ﻿using Investment.Core.Interfaces;
+using Investment.Core.Jobs;
+using Investment.Core.Providers.Bc;
 using Investment.Core.UseCases;
 using Investment.Infra.Data;
 using Investment.Infra.Repositories;
@@ -24,9 +26,13 @@ namespace Investment.Ioc
             //Services
             services.AddScoped<IAuthUseCase, AuthUseCase>();
             services.AddScoped<IUserUseCase, UserUseCase>();
+            services.AddScoped<IBackgroudJobService, BackgroudJobService>();
+            services.AddScoped<IBcProvider, BcProvider>();
+            services.AddScoped<IWalletUseCase, WalletUseCase>();
 
             //Repositories
             services.AddScoped<IUserRepository,UserRepository>();
+            services.AddScoped<IWalletRepository,WalletRepository>();
         }
     }
 }
