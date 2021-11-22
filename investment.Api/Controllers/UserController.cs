@@ -27,7 +27,11 @@ namespace Investment.Api.Controllers
             await userUseCase.CreateUser(createUserDto);
             return Created(string.Empty,null);
         }
-
+        /// <summary>
+        /// Retorna o usuário logado
+        /// </summary>
+        /// <param name="userUseCase"></param>
+        /// <returns></returns>
         [Authorize("Bearer")]
         [HttpGet]
         [ProducesResponseType(typeof(UserDto),(int)HttpStatusCode.OK)]
