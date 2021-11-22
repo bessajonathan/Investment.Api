@@ -8,12 +8,11 @@ namespace Investment.Infra.Configurations
     {
         public void Configure(EntityTypeBuilder<User> builder)
         {
-            builder.ToTable("users");
+            builder.ToTable("Users");
             builder.HasKey(x => x.Id);
 
             builder.Property(x => x.Name).IsRequired(true).HasMaxLength(100);
             builder.Property(x => x.FirebaseId).IsRequired(true).HasMaxLength(400);
-            builder.Property(x => x.UserName).IsRequired(true).HasMaxLength(100);
             builder.Property(x => x.CreatedAt).IsRequired(true);
             builder.Property(x => x.UpdatedAt).IsRequired(false);
         }

@@ -2,6 +2,7 @@
 using Investment.Core.Dtos.User;
 using Investment.Core.Entities;
 using Investment.Core.Interfaces;
+using System;
 using System.Threading.Tasks;
 
 namespace Investment.Core.UseCases
@@ -18,9 +19,25 @@ namespace Investment.Core.UseCases
         }
         public async Task CreateUser(CreateUserDto createUserDto)
         {
-            var newUser = _mapper.Map<User>(createUserDto);
+            bool exist = await _userRepository.VerifyIfUserExistByFirebaseId(createUserDto.FirebaseId);
 
-            await _userRepository.CreateUser(newUser);
+            if (!exist)
+            {
+                var newUser = _mapper.Map<User>(createUserDto);
+
+
+                await _userRepository.CreateUser(newUser);
+            }
+        }
+
+        public async Task<UserDto> GetUser(string firebaseId)
+        {
+            var user = await _userRepository.GetUserByFirebaseId(firebaseId);
+
+            if (user == null)
+                throw new Exception("Usuário não encontrado");
+
+            return _mapper.Map<UserDto>(user);
         }
     }
 }

@@ -4,14 +4,16 @@ using Investment.Infra.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 namespace Investment.Infra.Migrations
 {
     [DbContext(typeof(InvestmentDbContext))]
-    partial class InvestmentDbContextModelSnapshot : ModelSnapshot
+    [Migration("20211121231541_create-table")]
+    partial class createtable
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -29,8 +31,8 @@ namespace Investment.Infra.Migrations
                     b.Property<int>("ActiveType")
                         .HasColumnType("int");
 
-                    b.Property<decimal>("Amount")
-                        .HasColumnType("decimal(18,2)");
+                    b.Property<double>("Amount")
+                        .HasColumnType("float");
 
                     b.Property<DateTime>("CreatedAt")
                         .HasColumnType("datetime2");
@@ -62,7 +64,12 @@ namespace Investment.Infra.Migrations
                     b.Property<DateTime?>("UpdatedAt")
                         .HasColumnType("datetime2");
 
+                    b.Property<int>("WalletId")
+                        .HasColumnType("int");
+
                     b.HasKey("Id");
+
+                    b.HasIndex("WalletId");
 
                     b.ToTable("Users");
                 });
@@ -105,8 +112,8 @@ namespace Investment.Infra.Migrations
                         .HasColumnType("int")
                         .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
 
-                    b.Property<decimal>("Amount")
-                        .HasColumnType("decimal(18,2)");
+                    b.Property<double>("Amount")
+                        .HasColumnType("float");
 
                     b.Property<DateTime>("CreatedAt")
                         .HasColumnType("datetime2");
@@ -114,15 +121,20 @@ namespace Investment.Infra.Migrations
                     b.Property<DateTime?>("UpdatedAt")
                         .HasColumnType("datetime2");
 
-                    b.Property<int>("UserId")
-                        .HasColumnType("int");
-
                     b.HasKey("Id");
 
-                    b.HasIndex("UserId")
-                        .IsUnique();
-
                     b.ToTable("Wallets");
+                });
+
+            modelBuilder.Entity("Investment.Core.Entities.User", b =>
+                {
+                    b.HasOne("Investment.Core.Entities.Wallet", "Wallet")
+                        .WithMany()
+                        .HasForeignKey("WalletId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Wallet");
                 });
 
             modelBuilder.Entity("Investment.Core.Entities.UserActive", b =>
@@ -144,22 +156,9 @@ namespace Investment.Infra.Migrations
                     b.Navigation("User");
                 });
 
-            modelBuilder.Entity("Investment.Core.Entities.Wallet", b =>
-                {
-                    b.HasOne("Investment.Core.Entities.User", "User")
-                        .WithOne("Wallet")
-                        .HasForeignKey("Investment.Core.Entities.Wallet", "UserId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("User");
-                });
-
             modelBuilder.Entity("Investment.Core.Entities.User", b =>
                 {
                     b.Navigation("Actives");
-
-                    b.Navigation("Wallet");
                 });
 #pragma warning restore 612, 618
         }

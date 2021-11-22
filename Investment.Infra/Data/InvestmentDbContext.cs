@@ -12,5 +12,8 @@ namespace Investment.Infra.Data
         }
 
         public DbSet<User> Users { get ; set; }
+        public DbSet<Active> Actives { get ; set; }
+        public DbSet<UserActive> UserActives { get ; set; }
+        public DbSet<Wallet> Wallets { get ; set; }
     }
 }
