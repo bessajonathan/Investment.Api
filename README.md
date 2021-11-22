@@ -16,6 +16,9 @@ Api Rest para consulta das ações na bolsa de valores
 ## Como Utilizar
 
 - Após a inicialização do projeto será aberto a documentação da Api na rota.
+- É necessário estar autenticado com o firebase.Você pode conseguir um token válido
+  utilizando o app disponível no repositório : https://github.com/bessajonathan/Investment.App
+  basta entrar com sua conta do google.
 
 ## Ferramentas utilizadas
 
@@ -25,6 +28,7 @@ Api Rest para consulta das ações na bolsa de valores
 -- EntityFramework
 -- Mediator
 -- Nunit
+-- Hangfire
 
 ## Sdk
 
@@ -35,6 +39,7 @@ Api Rest para consulta das ações na bolsa de valores
 -- Clean Architecture
 -- Solid
 -- Repository Pattern
+-- Injeção de dependência
 
 ## Subir container docker
 
